@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"golang_practice/app/model"
 	"log"
 	"net/http"
 	"time"
@@ -63,21 +64,12 @@ DBcheckTable ===> deal with db AutoMigrate
 */
 func DBcheckTable() error {
 
-	type UserList struct {
-		ID        int    `gorm:"priamrykey"`
-		Username  string `gorm:"column:username"`
-		Password  string `gorm:"column:password"`
-		CreatedAt time.Time
-		UpdatedAt time.Time
-		DeletedAt gorm.DeletedAt `gorm:"index"`
-	}
-
 	db, err := connectDB()
 	if err != nil {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	if err = db.AutoMigrate(&UserList{}); err != nil {
+	if err = db.AutoMigrate(&model.UserList{}); err != nil {
 		fmt.Println("DB Migrate failed ===> ", err)
 	}
 
@@ -100,13 +92,7 @@ func CreateUser(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	type UserList struct {
-		ID       int    `gorm:"priamrykey"`
-		Username string `gorm:"column:username"`
-		Password string `gorm:"column:password"`
-	}
-
-	if err = db.Model(&UserLists{}).Create(map[string]interface{}{
+	if err = db.Model(&model.UserList{}).Create(map[string]interface{}{
 		"username": json.User, "password": json.Password,
 	}).Error; err != nil {
 
@@ -128,6 +114,7 @@ func CreateUser(c *gin.Context) {
 // DeleteUser ===>  刪除使用者的 api
 func DeleteUser(c *gin.Context) {
 
+	// api 需要的參數
 	type ReqUser struct {
 		ID int `form:"id" json:"id" binding:"required"`
 	}
@@ -145,13 +132,7 @@ func DeleteUser(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	type UserList struct {
-		ID       int    `gorm:"priamrykey"`
-		Username string `gorm:"column:username"`
-		Password string `gorm:"column:password"`
-	}
-
-	dbUser := UserList{
+	dbUser := model.UserList{
 		ID: req.ID,
 	}
 
@@ -192,11 +173,7 @@ func UpdateUser(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	type UserList struct {
-		Password string `gorm:"column:password"`
-	}
-
-	strDB := &UserList{
+	strDB := &model.UserList{
 		Password: reqParmams.Password,
 	}
 	fmt.Println("strDB ===>", strDB)
@@ -241,13 +218,7 @@ func QueryUser(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	type UserList struct {
-		ID       int    `gorm:"priamrykey"`
-		Username string `gorm:"column:username"`
-		Password string `gorm:"column:password"`
-	}
-
-	dbaccept := []UserList{}
+	dbaccept := []model.UserList{}
 
 	result := db.Where("Username = ?", reqParmams.Username).Find(&dbaccept)
 	fmt.Println(dbaccept)
@@ -272,6 +243,12 @@ func QueryUser(c *gin.Context) {
 func connectDB() (*gorm.DB, error) {
 	dsn := "root:example@tcp(127.0.0.1:3306)/backend_user?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+	//  gorm 連線池設定
+	sqlDB, err := db.DB()
+	sqlDB.SetMaxIdleConns(10)                  // 最大的閒置連線數量
+	sqlDB.SetMaxOpenConns(100)                 // 最大可存活連線數量，超過的必須等待
+	sqlDB.SetConnMaxLifetime(time.Second * 10) // 閒置時間設定， 使用計算的方式 ex:time.Second * 10
 
 	tx := db.Debug()
 
