@@ -2,9 +2,10 @@ package handler
 
 import (
 	"fmt"
-	"golang_practice/app/internal"
-	"golang_practice/app/model"
+
 	"net/http"
+	"usercenter/app/internals/database"
+	"usercenter/app/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +29,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	//  跟 DB 取得連線
-	db, err := internal.ConnectDB()
+	db, err := database.ConnectDB()
 	if err != nil {
 		fmt.Println("DB connect failed ===> ", err)
 	}

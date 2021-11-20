@@ -1,7 +1,9 @@
-package internal
+package database
 
 import (
+	"fmt"
 	"time"
+	"usercenter/app/model"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -20,4 +22,22 @@ func ConnectDB() (*gorm.DB, error) {
 	tx := db.Debug()
 
 	return tx, err
+}
+
+/*
+DBcheckTable ===> deal with db AutoMigrate
+                  處理 AutoMigrate
+*/
+func DBcheckTable() error {
+
+	db, err := ConnectDB()
+	if err != nil {
+		fmt.Println("DB connect failed ===> ", err)
+	}
+
+	if err = db.AutoMigrate(&model.UserList{}); err != nil {
+		fmt.Println("DB Migrate failed ===> ", err)
+	}
+
+	return err
 }

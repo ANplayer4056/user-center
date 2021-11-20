@@ -2,11 +2,18 @@ package main
 
 import (
 	"fmt"
-	"golang_practice/app/handler"
-	"golang_practice/app/internal"
+
+	"usercenter/app/internals/database"
+	"usercenter/router"
 
 	"github.com/gin-gonic/gin"
 )
+
+func init() {
+	if err := database.DBcheckTable(); err != nil {
+		return
+	}
+}
 
 /**
 * gin :
@@ -30,16 +37,8 @@ func main() {
 			fmt.Println("[❌ Fatal❌ ] HTTP:", err)
 		}
 	}()
-
-	if err := internal.DBcheckTable(); err != nil {
-		return
-	}
-
 	// 使用 gin 來製作 CRUD API
 	r := gin.Default()
-	r.POST("/createUser", handler.CreateUser)
-	r.DELETE("/deleteUser", handler.DeleteUser)
-	r.PUT("/updateUser", handler.UpdateUser)
-	r.POST("/queryUser", handler.QueryUser)
+	router.BackendUser(r)
 	_ = r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

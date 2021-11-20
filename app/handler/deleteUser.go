@@ -2,9 +2,9 @@ package handler
 
 import (
 	"fmt"
-	"golang_practice/app/internal"
 	"log"
 	"net/http"
+	"usercenter/app/internals/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func DeleteUser(c *gin.Context) {
 	}
 
 	//  跟 DB 取得連線
-	db, err := internal.ConnectDB()
+	db, err := database.ConnectDB()
 	if err != nil {
 		fmt.Println("DB connect failed ===> ", err)
 	}
