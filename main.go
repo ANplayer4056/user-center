@@ -11,6 +11,7 @@ import (
 
 func init() {
 	if err := database.DBcheckTable(); err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 }

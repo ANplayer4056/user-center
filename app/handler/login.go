@@ -32,11 +32,13 @@ func Login(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	//  處理 DB 查詢
-	dbaccept := []model.UserList{} //   dbaccept
+	//  處理 DB 查詢 (找到的資料) ===> 只有一筆
+	dbaccept := model.UserList{} //   dbaccept
 
 	//  找第一筆吻合資料
 	result := db.Where("Username = ? AND Password  = ?", json.Account, json.Password).First(&dbaccept)
+
+	fmt.Printf("====>%+v \n", dbaccept)
 
 	if result.Error != nil {
 		log.Printf("Error Message is %v ", result.Error)
@@ -47,8 +49,25 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	//  定義回傳 struct
+	type UserInfo struct {
+		ID       int    `json:"id"`
+		Username string `json:"username"`
+		Status   bool   `json:"status"`
+		Depart   string `json:"depart"`
+		Level    int    `json:"level"`
+	}
+
+	obj := UserInfo{}
+	obj.ID = dbaccept.ID
+	obj.Username = dbaccept.Username
+	obj.Status = dbaccept.Status
+	obj.Depart = dbaccept.Depart
+	obj.Level = dbaccept.Level
+
 	c.JSON(200, gin.H{
-		"statusCode": 200,
-		"message":    "login success",
+		"statusCode": 0,
+		"message":    "",
+		"data":       obj,
 	})
 }
