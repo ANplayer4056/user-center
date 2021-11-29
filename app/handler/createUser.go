@@ -16,13 +16,16 @@ import (
 func CreateUser(c *gin.Context) {
 
 	//  定義 api 接收的參數 struct
-	type UserLists struct {
-		User     string `form:"user" json:"user" binding:"required"`
-		Password string `form:"password" json:"password" binding:"required"`
+	type UserInfo struct {
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
+		Status   bool   `json:"status" binding:"required"`
+		Depart   string `json:"depart" binding:"required"`
+		Level    int    `json:"level" binding:"required"`
 	}
 
 	//  取得 JSON data 參數
-	var json UserLists
+	var json UserInfo
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -36,19 +39,20 @@ func CreateUser(c *gin.Context) {
 
 	//  處理 新增 User
 	if err = db.Model(&model.UserList{}).Create(map[string]interface{}{
-		"username": json.User, "password": json.Password,
+		"username": json.Username, "password": json.Password, "status": json.Status, "depart": json.Depart, "level": json.Level,
 	}).Error; err != nil {
 
 		c.JSON(200, gin.H{
-			"statusCode": 1001,
+			"statusCode": 1002,
 			"message":    "create failed",
+			"data":       "",
 		})
 		return
 	}
 
 	c.JSON(200, gin.H{
-		"statusCode": 200,
-		"userName":   json.User,
-		"Password":   json.Password,
+		"statusCode": 0,
+		"message":    "",
+		"data":       "",
 	})
 }

@@ -38,13 +38,14 @@ func Login(c *gin.Context) {
 	//  找第一筆吻合資料
 	result := db.Where("Username = ? AND Password  = ?", json.Account, json.Password).First(&dbaccept)
 
-	fmt.Printf("====>%+v \n", dbaccept)
+	// fmt.Printf("====>%+v \n", dbaccept)
 
 	if result.Error != nil {
 		log.Printf("Error Message is %v ", result.Error)
 		c.JSON(200, gin.H{
 			"statusCode": 1001,
 			"message":    "login failed",
+			"data":       "",
 		})
 		return
 	}

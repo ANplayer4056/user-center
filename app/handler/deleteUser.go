@@ -11,9 +11,10 @@ import (
 
 // DeleteUser ===>  刪除使用者的 api
 func DeleteUser(c *gin.Context) {
+
 	//  定義 api 接收的參數 struct
 	type ReqUser struct {
-		ID int `form:"id" json:"id" binding:"required"`
+		ID int `json:"id" binding:"required"`
 	}
 
 	//  取得 JSON data 參數
@@ -33,14 +34,16 @@ func DeleteUser(c *gin.Context) {
 	if err = db.Delete(&req.ID).Error; err != nil {
 		log.Printf("Error Message is %v ", err.Error())
 		c.JSON(200, gin.H{
-			"statusCode": 1001,
+			"statusCode": 1004,
 			"message":    "delete failed",
+			"data":       "",
 		})
 		return
 
 	}
 	c.JSON(200, gin.H{
-		"statusCode": 200,
-		"message":    "delete success",
+		"statusCode": 0,
+		"message":    "",
+		"data":       "",
 	})
 }

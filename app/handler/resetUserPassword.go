@@ -10,15 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//  UpdateUser ===>  更新單一使用者的 api
-func UpdateUser(c *gin.Context) {
+//  ResetUserPassword ===>  重設用戶密碼的 api
+func ResetUserPassword(c *gin.Context) {
 
 	//  定義 api 接收的參數 struct
 	type ReqUser struct {
+		ID       int    `json:"id" binding:"required"`
 		Username string `json:"username" binding:"required"`
-		Status   bool   `json:"status" binding:"required"`
-		Depart   string `json:"depart" binding:"required"`
-		Level    int    `json:"level" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	//  取得 JSON data 參數

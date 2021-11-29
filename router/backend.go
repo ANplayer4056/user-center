@@ -16,4 +16,7 @@ func BackendUser(r *gin.Engine) {
 	r.POST("/queryUser", handler.QueryUser)
 
 	r.POST("/login", handler.Login)
+	r.GET("/userlist", handler.UserList)
+	r.PUT("/updatePassword", handler.UpdatePassword)
+	r.PUT("/resetUserPassword", handler.ResetUserPassword)
 }
