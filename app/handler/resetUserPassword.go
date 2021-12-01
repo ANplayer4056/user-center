@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"crypto/rand"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,7 +18,6 @@ func ResetUserPassword(c *gin.Context) {
 	type ReqUser struct {
 		ID       int    `json:"id" binding:"required"`
 		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
 	}
 
 	//  取得 JSON data 參數
@@ -33,9 +33,29 @@ func ResetUserPassword(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
-	//  處理  更新 User
-	//  structs.Map >> 当通过 struct 更新时，GORM 只会更新非零字段。 如果您想确保指定字段被更新，你应该使用 Select 更新选定字段，或使用 map 来完成更新操作
-	mapDB := structs.Map(&ReqUser{})
+	//  定義 回傳 struct
+	type ReSetPwd struct {
+		ID       int
+		Username string
+		Password string
+	}
+
+	//  產生隨機密碼串
+	n := 5 //  設定字母位數(A-Z)
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
+	}
+	s := fmt.Sprintf("%X", b) // 隨機密碼
+
+	obj := ReSetPwd{}
+
+	obj.ID = reqParmams.ID
+	obj.Username = reqParmams.Username
+	obj.Password = s
+
+	//  處理  重設指定用戶密碼
+	mapDB := structs.Map(&ReSetPwd{})
 	if err = db.Model(&ReqUser{}).Where("Username = ?", reqParmams.Username).Updates(&mapDB).Error; err != nil {
 		log.Printf("Error Message is %v ", err.Error())
 

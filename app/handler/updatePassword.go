@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"usercenter/app/internals/database"
+	"usercenter/app/model"
 
 	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,10 @@ func UpdatePassword(c *gin.Context) {
 
 	//  定義 api 接收的參數 struct
 	type UserInfo struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		Username      string `json:"username" binding:"required"`
+		OldPassword   string `json:"oldpassword" binding:"required"`
+		NewPassword   string `json:"newpassword" binding:"required"`
+		CheckPassword string `json:"checkpassword" binding:"required"`
 	}
 
 	//  取得 JSON data 參數
@@ -32,9 +35,39 @@ func UpdatePassword(c *gin.Context) {
 		fmt.Println("DB connect failed ===> ", err)
 	}
 
+	//  查詢 user password
+	dbaccept := model.UserList{} //   dbaccept
+	result := db.Where("Username = ?", reqParmams.Username).First(&dbaccept)
+
+	if result.Error != nil {
+		log.Printf("Error Message is %v ", result.Error)
+		c.JSON(200, gin.H{
+			"statusCode": 1001,
+			"message":    "用戶資料錯誤",
+		})
+		return
+	}
+
+	//  定義 更新DB struct
+	type UpdateInfo struct {
+		Username string
+		Password string
+	}
+
+	//  判斷密碼正確?
+	if dbaccept.Password != reqParmams.OldPassword {
+
+		fmt.Println("Error ===>  密碼不符")
+		c.JSON(200, gin.H{
+			"statusCode": 1006,
+			"message":    "密碼不符",
+		})
+		return
+	}
+
 	//  處理  更新 User Password
-	mapDB := structs.Map(&UserInfo{})
-	if err = db.Model(&UserInfo{}).Where("Username = ?", reqParmams.Username).Updates(&mapDB).Error; err != nil {
+	mapDB := structs.Map(&UpdateInfo{})
+	if err = db.Model(&UserInfo{}).Where("Username = ? ", reqParmams.Username).Updates(&mapDB).Error; err != nil {
 		log.Printf("Error Message is %v ", err.Error())
 
 		c.JSON(200, gin.H{
