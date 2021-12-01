@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"usercenter/app/global"
 	"usercenter/app/internals/database"
 
 	"github.com/fatih/structs"
@@ -46,7 +47,7 @@ func ResetUserPassword(c *gin.Context) {
 	if _, err := rand.Read(b); err != nil {
 		panic(err)
 	}
-	s := fmt.Sprintf("%X", b) // 隨機密碼
+	s := global.RandomString()
 
 	obj := ReSetPwd{}
 
