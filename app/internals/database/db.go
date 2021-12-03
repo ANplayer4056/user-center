@@ -36,7 +36,21 @@ func DBcheckTable() error {
 	}
 
 	if err = db.AutoMigrate(&model.UserList{}); err != nil {
-		fmt.Println("DB Migrate failed ===> ", err)
+		fmt.Println("UserList  Table  Migrate failed ===> ", err)
+	}
+
+	return err
+}
+
+//  處理 depart table AutoMigrate
+func DBcheckDepartTable() error {
+	db, err := ConnectDB()
+	if err != nil {
+		fmt.Println("DB connect failed ===> ", err)
+	}
+
+	if err = db.AutoMigrate(&model.DepartList{}); err != nil {
+		fmt.Println("DepartList   Table   Migrate failed ===> ", err)
 	}
 
 	return err

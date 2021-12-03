@@ -19,4 +19,10 @@ func BackendUser(r *gin.Engine) {
 	r.GET("/userlist", handler.UserList)
 	r.PUT("/updatePassword", handler.UpdatePassword)
 	r.PUT("/resetUserPassword", handler.ResetUserPassword)
+
+	r.GET("/departlist", handler.DepartList)
+	r.POST("/createDepart", handler.CreateDepart)
+	r.DELETE("/deleteDepart", handler.DeleteDepart)
+	r.PUT("/updateDepart", handler.UpdateDepart)
+
 }

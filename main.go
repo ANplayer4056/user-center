@@ -14,6 +14,11 @@ func init() {
 		fmt.Println(err.Error())
 		return
 	}
+
+	if err := database.DBcheckDepartTable(); err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 }
 
 /**
