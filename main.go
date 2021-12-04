@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//  call before main
 func init() {
 	if err := database.DBcheckTable(); err != nil {
 		fmt.Println(err.Error())

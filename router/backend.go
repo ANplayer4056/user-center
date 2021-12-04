@@ -13,7 +13,7 @@ func BackendUser(r *gin.Engine) {
 	})
 	r.DELETE("/deleteUser", handler.DeleteUser)
 	r.PUT("/updateUser", handler.UpdateUser)
-	r.POST("/queryUser", handler.QueryUser)
+	r.GET("/queryUser", handler.QueryUser)
 
 	r.POST("/login", handler.Login)
 	r.GET("/userlist", handler.UserList)

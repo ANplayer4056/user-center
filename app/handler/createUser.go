@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-
 	"net/http"
 	"usercenter/app/internals/database"
 	"usercenter/app/model"
@@ -34,7 +32,13 @@ func CreateUser(c *gin.Context) {
 	//  跟 DB 取得連線
 	db, err := database.ConnectDB()
 	if err != nil {
-		fmt.Println("DB connect failed ===> ", err)
+
+		c.JSON(200, gin.H{
+			"statusCode": 500,
+			"message":    "connect  failed " + err.Error(),
+			"data":       "",
+		})
+		return
 	}
 
 	//  處理 新增 User
@@ -44,7 +48,7 @@ func CreateUser(c *gin.Context) {
 
 		c.JSON(200, gin.H{
 			"statusCode": 1002,
-			"message":    "create failed",
+			"message":    "create failed " + err.Error(),
 			"data":       "",
 		})
 		return

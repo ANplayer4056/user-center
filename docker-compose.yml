@@ -3,7 +3,7 @@ version: "3.7"
 services:
   mariadb:
     image: mariadb
-    container_name: mariadb1
+    container_name: userCenterDB
     restart: always
     volumes:
       - /DB/my_maria/:/var/lib/mysql
@@ -12,12 +12,25 @@ services:
       MYSQL_DATABASE: backend_user
     ports:
       - 3306:3306
+    networks:
+     - backendCenter
 
-  phpserve:
-    image: phpmyadmin
-    container_name: myphp
+  goserver:
+    image: golang
+    container_name: golangServer
     ports:
-      - 8888:80
+      - 8080:8080
     restart: always
-    environment:
-      - PMA_ARBITRARY=1
+    volumes:
+       - .:/server
+    depends_on:
+      - mariadb
+    working_dir: /server
+    entrypoint: go run main.go
+    networks:
+     - backendCenter
+
+
+networks:
+    backendCenter:
+      external: true 

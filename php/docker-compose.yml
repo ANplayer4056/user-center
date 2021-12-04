@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  phpserve:
+    image: phpmyadmin
+    container_name: myphp
+    ports:
+      - 8888:80
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+     - backendCenter
+
+
+# external ===> 設定是否要檢查網路存不存在? 如果存在: 就可以透過 networks 使用；
+#                             如果不存在: docker-compose 啟動失敗，並提示錯誤
+networks:
+    backendCenter:
+      external: true 
